@@ -1,2 +1,3 @@
-# python-quantuiti
-Python package for Quantuiti
+# CompuTrade
+
+Quantuiti is a platform designed to make automated trading easier
