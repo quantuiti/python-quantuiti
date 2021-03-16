@@ -5,6 +5,11 @@ name = "pypi"
 
 [packages]
 twine = "*"
+pandas = "*"
+pandas-datareader = "*"
+matplotlib = "*"
+mpl-finance = "*"
+mplfinance = "*"
 
 [dev-packages]
 

@@ -1,11 +1,10 @@
-
 import inspect
 import os
 import pandas as pd
 from pandas_datareader import data as pdr
 import random
 import matplotlib.pyplot as plt
-class CompuTradeEngine():
+class Engine():
     """
     CompuTradeEngine helps you reliabley backtest your trading algorithms faster than ever.
     

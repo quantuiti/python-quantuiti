@@ -1,30 +1,17 @@
-from mpl_finance import candlestick_ohlc
-import matplotlib.pyplot as plt
-import matplotlib.dates as mpl_dates
-import pandas as pd
+# import required packages 
+import matplotlib.pyplot as plt 
+import mplfinance as mpf
+import pandas as pd 
+import matplotlib.dates as mpdates 
+
 def graph(self):
-    # Extracting Data for plotting
-    ohlc = self.data.loc[:, ['Open', 'High', 'Low', 'Close']]
-    ohlc['Date'] = self.data.index
-    ohlc['Date'] = pd.to_datetime(ohlc['Date'])
-    ohlc['Date'] = ohlc['Date'].apply(mpl_dates.date2num)
-    ohlc = ohlc.astype(float)
-
-    # Creating Subplots
-    fig, ax = plt.subplots()
-
-    candlestick_ohlc(ax, ohlc.values, width=0.6, colorup='green', colordown='red', alpha=0.8)
-
-    # Setting labels & titles
-    ax.set_xlabel('Date')
-    ax.set_ylabel('Price')
-    fig.suptitle('Daily Candlestick Chart of NIFTY50')
-
-    # Formatting Date
-    date_format = mpl_dates.DateFormatter('%d-%m-%Y')
-    ax.xaxis.set_major_formatter(date_format)
-    fig.autofmt_xdate()
-
-    fig.tight_layout()
-
-    plt.show()
+    df = self.data[['Open', 'High', 'Low', 'Close', 'Volume', 'ema_10']]
+    s = mpf.make_mpf_style(base_mpf_style='charles', rc={'font.size': 6})
+    fig = mpf.figure(figsize=(10, 7), style=s) # pass in the self defined style to the whole canvas
+    ax = fig.add_subplot(2,1,1) # main candle stick chart subplot, you can also pass in the self defined style here only for this subplot
+    av = fig.add_subplot(2,1,2, sharex=ax)  # volume chart subplot
+    ema10_plot = mpf.make_addplot(self.data['ema_10'], panel=2, ylabel='ema_10', ax=ax)
+    ema20_plot = mpf.make_addplot(self.data['ema_20'], panel=2, ylabel='ema_20', ax=ax)
+    mpf.plot(df, type='candle', ax=ax, volume=av, addplot=[ema10_plot, ema20_plot])
+    mpf.show()
+    
