@@ -1,13 +1,15 @@
 import setuptools
-from quantuiti import __about__
+import os
+import sys
 
 with open("package_README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name=__about__.__project__,
-    version=__about__.__version__,
-    author=__about__.__author__,
+    packages=setuptools.find_packages('quantuiti'),
+    name="quantuiti",
+    version="0.1.0",
+    author="Dylan Muraco",
     author_email="dylanjmuraco@gmail.com",
     description="quantuiti library for quantitative finance",
     long_description=long_description,
@@ -16,7 +18,7 @@ setuptools.setup(
     url="https://github.com/quantuiti/python-quantuiti",
     entry_points ={ 
         'console_scripts': [ 
-            'quantuiti = Quantuiti.__main__:main'
+            'quantuiti = quantuiti.__main__:main'
         ] 
     },
     project_urls={
@@ -27,6 +29,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    packages=setuptools.find_packages(),
+    
     python_requires=">=3.6",
 )

@@ -1,3 +1,0 @@
-[console_scripts]
-quantuiti = Quantuiti.__main__:main
-

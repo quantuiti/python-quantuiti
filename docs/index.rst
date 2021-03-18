@@ -9,7 +9,7 @@ Welcome to quantuiti's documentation!
 Release v\ |version|
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 10
 
    quantuiti
 
