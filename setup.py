@@ -1,14 +1,15 @@
 import setuptools
+from quantuiti import __about__
 
 with open("package_README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="Quantuiti",
-    version='0.0.1',
-    author="Dylan Muraco",
+    name=__about__.__project__,
+    version=__about__.__version__,
+    author=__about__.__author__,
     author_email="dylanjmuraco@gmail.com",
-    description="Quantuiti library for quantitative finance",
+    description="quantuiti library for quantitative finance",
     long_description=long_description,
     long_description_content_type="text/markdown",
     include_package_data=True,

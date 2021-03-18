@@ -4,6 +4,7 @@ import pandas as pd
 from pandas_datareader import data as pdr
 import random
 import matplotlib.pyplot as plt
+from quantuiti import __about__
 class Engine():
     """
     CompuTradeEngine helps you reliabley backtest your trading algorithms faster than ever.

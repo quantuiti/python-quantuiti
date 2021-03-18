@@ -6,10 +6,12 @@
 Welcome to Quantuiti's documentation!
 =====================================
 
+Release v\ |version|
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
+   <name-of-package>
 
 
 Indices and tables
