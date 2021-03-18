@@ -11,7 +11,7 @@ Release v\ |version|
 .. toctree::
    :maxdepth: 2
 
-   <name-of-package>
+   quantuiti
 
 
 Indices and tables
