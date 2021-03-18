@@ -30,7 +30,7 @@ author = quantuiti.__about__.__author__
 copyright = u'Copyright 2021 - {0} {1}'.format(date.today().year, author)
 
 # The short X.Y version
-version = <name-of-package>.__about__.__version__
+version = quantuiti.__about__.__version__
 # The full version, including alpha/beta/rc tags
 release = version
 
