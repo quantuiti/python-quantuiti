@@ -8,3 +8,7 @@ Module contents
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. autoclass:: quantuiti.Engine
+   :members:
+   :special-members:
