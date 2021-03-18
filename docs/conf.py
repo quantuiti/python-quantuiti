@@ -4,14 +4,15 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-autodoc_mock_imports = ['pandas']
-
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+# import os
+# import sys
+# sys.path.insert(0, os.path.abspath('.'))
 import os
 import sys
 from datetime import date
@@ -24,14 +25,14 @@ import quantuiti
 
 # -- Project information -----------------------------------------------------
 
-project = 'Quantuiti'
-copyright = '2021, Dylan Muraco'
-author = 'Dylan Muraco'
+project = quantuiti.__about__.__project__
+author = quantuiti.__about__.__author__
+copyright = u'Copyright 2021 - {0} {1}'.format(date.today().year, author)
 
+# The short X.Y version
+version = <name-of-package>.__about__.__version__
 # The full version, including alpha/beta/rc tags
-version = quantuiti.__about__.__version__
 release = version
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -39,6 +40,7 @@ release = version
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    ’sphinx.ext.napoleon’
 ]
 
 # Add any paths that contain templates here, relative to this directory.
