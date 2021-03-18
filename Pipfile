@@ -10,6 +10,7 @@ pandas-datareader = "*"
 matplotlib = "*"
 mpl-finance = "*"
 mplfinance = "*"
+quantuiti = {path = "./dist/Quantuiti-0.0.1-py3-none-any.whl"}
 
 [dev-packages]
 

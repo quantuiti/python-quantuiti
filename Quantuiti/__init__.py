@@ -29,7 +29,7 @@ class Engine():
 
     from ._roc import roc
 
-    def __init__(self, backtest=True, build=False):
+    def __init__(self, backtest=True, build=False, graph=False):
         self.constuctors()
 
         # next block gets the callee's working directory
@@ -43,6 +43,7 @@ class Engine():
 
         self.backtest = backtest
         self.build = build
+        self.graph = graph
 
     def constuctors(self):
         self.algorithmFunc = None
@@ -55,7 +56,7 @@ class Engine():
         self.sells = []
 
     def backtest_algorithm(self):
-        symbols = ['AAPL', 'GME']
+        symbols = ['AIV','AAPL', 'GME']
         for symbol in symbols:
             self.CurrentSymbol = symbol
             self.index=0
@@ -67,10 +68,11 @@ class Engine():
 
                 self.index+=1
 
-            profit = ( self.data['Close'][-1]*self.shares ) - ( self.trades[-1][1] * self.shares )
-            self.sells.append(profit) 
-            self.balance = profit + ( self.trades[-1][1] * self.shares )
-            self.shares = 0
+            if self.shares != 0:
+                profit = ( self.data['Close'][-1]*self.shares ) - ( self.trades[-1][1] * self.shares )
+                self.sells.append(profit) 
+                self.balance = profit + ( self.trades[-1][1] * self.shares )
+                self.shares = 0
 
            # fig, ax = plt.subplots(nrows=2)
 
@@ -81,14 +83,17 @@ class Engine():
 
            # ax[1].set_title('cci')
            # ax[1].plot(self.data['cci_20'])
-            
             print('balance', self.balance)
-            print('roi: %', (self.balance / self.startBalance)*100)
+            
+            roi = ((self.balance - self.startBalance) / self.startBalance) * 100
+            print(f'roi: %{roi}')
 
             self.balance = 10000
             self.shares = 0
             # plt.show()
-            self.graph()
+            if self.graph:
+                self.graph()
+                
     
     def buy(self):
         if self.shares == 0 and self.balance > 0 :
@@ -103,5 +108,3 @@ class Engine():
             self.balance = profit + ( self.trades[-1][1] * self.shares )
             self.shares = 0
     
-    def config(self, period='15min'):
-        self.period = period

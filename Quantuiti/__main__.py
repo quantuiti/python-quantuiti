@@ -1,22 +1,23 @@
-import flask
-import webbrowser
-import threading
-import subprocess
-from .__init__ import CompuTradeEngine
-def start_server():
-    app = flask.Flask(__name__)
-    @app.route("/")
-    def home():
-        return flask.render_template('index.html')
-
-    @app.route("/run_script")
-    def run():
-        subprocess.run(["ls -l"], shell=True, check=True)
-        return "ok", 200
-
-    url = 'http://localhost:3000'
-    threading.Timer(1.25, lambda: webbrowser.open(url)).start()
-    app.run(port='3000', debug=False)
-
+import argparse
+import os
+def main():
+    parser = argparse.ArgumentParser(prog ='quantuiti', 
+                                    description ='Quantuiti is a platform designed for automated trading .') 
+  
+    parser.add_argument('-publish', dest ='publish',  
+                        help ='publish algorithm to quantuiti.com') 
+  
+    args = parser.parse_args() 
+  
+    if args.publish:
+        script_path = args.publish
+        try:
+            with open(script_path, 'r') as file:
+                lines = file.readlines()
+                print(lines)
+        except FileNotFoundError:
+            parser.error(f'FILE {script_path} NOT FOUND')
+       
+  
 if __name__ == "__main__":
-    start_server()
+    main()

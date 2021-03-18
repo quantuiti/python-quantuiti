@@ -1,34 +1,25 @@
-from flask import Flask
-import logging
-import webbrowser
-import threading
-import subprocess
-from .__init__ import CompuTradeEngine
-def start_server():
-    log = logging.getLogger('werkzeug')
-    log.disabled = False
-
-
-    app = Flask(__name__, static_folder='./build', static_url_path='/')
+import argparse
+def main():
+    parser = argparse.ArgumentParser(prog ='gfg', 
+                                    description ='GfG article demo package.') 
+  
+    parser.add_argument('integers', metavar ='N', type = int, nargs ='+', 
+                        help ='an integer for the accumulator') 
+    parser.add_argument('-greet', action ='store_const', const = True, 
+                        default = False, dest ='greet', 
+                        help ="Greet Message from Geeks For Geeks.") 
+    parser.add_argument('--sum', dest ='accumulate', action ='store_const', 
+                        const = sum, default = max, 
+                        help ='sum the integers (default: find the max)') 
+  
+    args = parser.parse_args() 
+  
+    if args.greet: 
+        print("Welcome to GeeksforGeeks !") 
+        if args.accumulate == max: 
+            print("The Computation Done is Maximum") 
+        else: 
+            print("The Computation Done is Summation") 
+        print("And Here's your result:", end =" ")    
+  
     
-    @app.route('/', defaults={'path': ''})
-    @app.route('/<path>')
-    def index(path):
-        return app.send_static_file('index.html')
-
-    @app.route('/api')
-    def api():
-        print('ACCESS')
-        return 'ok', 200
-
-    @app.route("/run_script")
-    def run():
-        subprocess.run(["ls -l"], shell=True, check=True)
-        return "ok", 200
-
-    url = 'http://localhost:3000'
-    threading.Timer(1.25, lambda: webbrowser.open(url)).start()
-    app.run(port='3000', debug=False)
-
-if __name__ == "__main__":
-    start_server()

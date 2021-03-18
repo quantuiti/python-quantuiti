@@ -13,6 +13,11 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     include_package_data=True,
     url="https://github.com/quantuiti/python-quantuiti",
+    entry_points ={ 
+        'console_scripts': [ 
+            'quantuiti = Quantuiti.__main__:main'
+        ] 
+    },
     project_urls={
         "Bug Tracker": "https://github.com/quantuiti/python-quantuiti/issues",
     },
