@@ -1,8 +1,9 @@
 import sys
 sys.path.insert(1, '/home/dylan/Desktop/python-quantuiti')
-from Quantuiti import Engine
+from quantuiti import Engine
 
-Engine = Engine()
+Engine = Engine(symbols=['AMD', 'GME', 'RIOT'], stop_loss=-3)
+
 
 @Engine.algorithm
 def algo():

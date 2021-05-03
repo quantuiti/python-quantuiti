@@ -2,12 +2,17 @@ from pandas import Series
 def emv(self, N=14):
     """
     Distance Moved =  ( ((High + Low) / 2) - ((PH + PH) / 2) )
+
     Box Ratio = (Volume / scale) / (High - Low)
+
     1-Period EMV = ((High + Low) / 2) - ((PH + PL) / 2 )) / ( (Volume / scale) / (High - Low) )
+
     14-period Ease of movement = 14-period simple moving average of 1-period EMV
+
     where:
-    PH = Prior High
-    PL = Prior Low
+    
+    - PH = Prior High
+    - PL = Prior Low
     """
     try:
         return self.data[name][self.index]

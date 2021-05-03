@@ -6,9 +6,8 @@ with open("package_README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    packages=setuptools.find_packages('quantuiti'),
     name="quantuiti",
-    version="0.1.0",
+    version="0.2.0",
     author="Dylan Muraco",
     author_email="dylanjmuraco@gmail.com",
     description="quantuiti library for quantitative finance",
@@ -29,6 +28,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    
+    packages=setuptools.find_packages(),
     python_requires=">=3.6",
 )

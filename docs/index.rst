@@ -8,8 +8,16 @@ Welcome to quantuiti's documentation!
 
 Release v\ |version|
 
+**quantuiti is a platform designed to make automated trading easier**
+
+*Currently quantuiti only has backtesting of algorithms through python with a limited amount of indicators*
+
+.. include:: getting_started.rst
+
 .. toctree::
-   :maxdepth: 10
+   :maxdepth: 3
+   
+   indicators
 
    quantuiti
 

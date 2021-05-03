@@ -1,13 +1,20 @@
+"""The inner module that implements :meth:`cci`.
+"""
+
 import pandas as pd
 def cci(self, N=20):
     """
     Commodity Channel Index/CCI = (Typical Price  - MA) / (0.015 * MD)
+
     Typical price = (High + Low + Close) / 3
+    
     MA = Moving Average
+    
     Moving Average = (N - PeriodSum) / N
+    
     MD = Mean Devation
+    
     Mean Devation = ∑i=1|Typical - MA| / N
-​	
     """
     name = 'cci_' + str(N)
 

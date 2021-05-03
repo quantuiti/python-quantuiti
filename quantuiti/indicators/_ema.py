@@ -2,7 +2,9 @@ import numpy as np
 def ema(self, N):
     """
     Simple Moving Average = (N - PeriodSum) / N
+
     N = number of days in a given period
+
     PeriodSum = sum of stock closing prices in that period
     """
     name = 'ema_' + str(N)

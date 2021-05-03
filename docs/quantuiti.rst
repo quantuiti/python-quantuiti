@@ -7,8 +7,8 @@ Module contents
 .. automodule:: quantuiti
    :members:
    :undoc-members:
-   :show-inheritance:
+   :private-members:
 
-.. autoclass:: quantuiti.Engine
+.. automodule:: quantuiti.indicators
    :members:
-   :special-members:
+   :show-inheritance:
