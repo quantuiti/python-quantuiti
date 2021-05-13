@@ -1,7 +1,7 @@
 import sys
 import os
-sys.path.insert(1, '/home/dylan/Desktop/quantuiti/python-quantuiti')
-print(os.getcwd())
+dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(1, dir_path)
 from quantuiti import Engine
 
 Engine = Engine(backtest=False)
@@ -23,5 +23,3 @@ Engine.config({
 def algo():
     # print('BTC-USDT price average', self.ema(5))
     self.ema(5)
-    print(self.close)
-

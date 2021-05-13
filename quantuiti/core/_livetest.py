@@ -34,7 +34,7 @@ def livetest_algorithm(self):
 
         @self.sio.event
         async def message(data):
-            print('I recieved a message')
+            print(data)
         @self.sio.event
         async def connect():
             print('i am connected')
@@ -57,7 +57,7 @@ def livetest_algorithm(self):
                         self.prevtime
                         if time >= self.prevtime:
                             temp = {
-                                'Date':   datetime.fromtimestamp(time).strftime('%y-%m-%d %h-%m-%s'),
+                                'Date':   datetime.fromtimestamp(time).strftime('%Y-%M-%d %H-%M-%S'),
                                 'High':   float(candles[3]),
                                 'Low':    float(candles[4]),
                                 'Open':   float(candles[1]),
@@ -73,9 +73,9 @@ def livetest_algorithm(self):
                     except Exception as error:
                         print(error)
                         print(type(error))
-                        # traceback.print_exc()
+                       
                         temp = {
-                            'Date':   [datetime.fromtimestamp(time).strftime('%y-%m-%d %h-%m-%s')],
+                            'Date':   [datetime.fromtimestamp(time).strftime('%Y-%M-%d %H-%M-%S')],
                             'High':   [float(candles[3])],
                             'Low':    [float(candles[4])],
                             'Open':   [float(candles[1])],
@@ -91,7 +91,8 @@ def livetest_algorithm(self):
             client = WsToken(key=api_key, secret=api_secret, passphrase=api_passphrase, is_sandbox=api_sandbox, url=api_url) # websockets stuff 
             self.ws_client = await KucoinWsClient.create(None, client, deal_msg, private=False)                              #
             await self.ws_client.subscribe('/market/candles:BTC-USDT_1min')                                                  #
-            await self.sio.connect('http://localhost:5000')                                                                  #
+            await self.sio.connect('http://127.0.0.1:5000')   
+            await self.sio.sleep(1.0)                                                               #
             
             while True:
                 await asyncio.sleep(5, loop=loop)
