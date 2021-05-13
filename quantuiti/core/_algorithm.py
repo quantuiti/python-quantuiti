@@ -57,6 +57,8 @@ def algorithm(self, function):
         self.algo = self.algo['algo']
         if self.backtest:
             self.backtest_algorithm()
+        else:
+            self.livetest_algorithm()
         if self.build:
             self.BuildPythonFile()
             

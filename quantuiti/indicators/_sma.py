@@ -1,3 +1,4 @@
+import numpy as np 
 def sma(self, N):
     """
     Simple Moving Average = (N - PeriodSum) / N
@@ -8,9 +9,13 @@ def sma(self, N):
     """
     name = 'sma_' + str(N)
     
-    try:
-        return self.data[name][self.index]
-            
-    except Exception as error:
+    if not self.backtest:
         self.data[name] = self.data.loc[:, 'Close'].rolling(window=N).mean() 
-        # setattr(self, name, [sma])
+        return self.data[name][self.index]
+        
+    else:
+        try:
+            return self.data[name][self.index]
+                
+        except Exception as error:
+            self.data[name] = self.data.loc[:, 'Close'].rolling(window=N).mean() 

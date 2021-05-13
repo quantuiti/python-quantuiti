@@ -1,45 +1,120 @@
 from pandas_datareader import data as pdr
+import pandas as pd 
+import kucoin.client as kucoin
+import datetime
 def backtest_algorithm(self):
-    symbols = self.symbols
-    for symbol in symbols:
-        self.CurrentSymbol = symbol
-        self.index=0
-        self.data = pdr.get_data_yahoo(symbols=symbol, interval=self.interval, start='JAN-01-2020', end='DEC-28-2020') # iterates over symbols by symbol to backtest algorithm on symbol data
-        self.close = self.data['Close']
-        for index, rows in self.data.iterrows():
+    if self.bot_type == 'crypto':
+        for symbol in self.symbols:
+            client = kucoin.Market(url='https://api.kucoin.com', is_sandbox=True)
+            klines = client.get_kline(symbol, '1day')
+            klines.reverse()
+            Date, High, Low, Open, Close, Volume = [], [], [], [], [], []
+            for kline in klines:
+                Date.append(datetime.datetime.fromtimestamp(int(kline[0])).strftime('%Y-%m-%d %H:%M:%S'))
+                High.append(float(kline[3]))
+                Low.append(float(kline[4]))
+                Open.append(float(kline[1]))
+                Close.append(float(kline[2]))
+                Volume.append(float(kline[6]))
+            self.data = {
+                'Date': Date,
+                'High': High,
+                'Low': Low,
+                'Open': Open,
+                'Close': Close,
+                'Volume': Volume
+            }
+            self.data = pd.DataFrame(self.data)
+            self.data['Date'] = pd.to_datetime(self.data['Date'])
+            self.data = self.data.set_index('Date')
+
+            self.CurrentSymbol = symbol
+            self.index = 0
+            self.close = Close
+
+            for index, rows in self.data.iterrows():
+                if self.shares != 0:
+                    self.investment_gain = ((self.data['Close'][self.index] - self.trades[-1][1]) / self.trades[-1][1]) * 100
+                    if self.investment_gain < self.stop_loss:
+                        self.sell()
+                self.algo(self)
+
+
+                self.index+=1
+            
             if self.shares != 0:
-                self.investment_gain = ((self.data['Close'][self.index] - self.trades[-1][1]) / self.trades[-1][1]) * 100
-                if self.investment_gain < self.stop_loss:
-                    self.sell()
-            self.algo(self)
+                profit = ( self.data['Close'][-1]*self.shares ) - ( self.trades[-1][1] * self.shares )
+                self.sells.append(profit) 
+                self.balance = profit + ( self.trades[-1][1] * self.shares )
+                self.shares = 0
+
+                
+            roi = ((self.balance - self.startBalance) / self.startBalance) * 100
+            self.success = [0,0]
+            self.success[1] = self.success[1] + len(self.sells)
+            for i in range(len(self.sells)):
+                if self.sells[i] > 0:
+                    self.success[0] = self.success[0] + 1
 
 
-            self.index+=1
 
-        if self.shares != 0:
-            profit = ( self.data['Close'][-1]*self.shares ) - ( self.trades[-1][1] * self.shares )
-            self.sells.append(profit) 
-            self.balance = profit + ( self.trades[-1][1] * self.shares )
+
+            self.balance = 10000
             self.shares = 0
 
-              
-        roi = ((self.balance - self.startBalance) / self.startBalance) * 100
-        self.success = [0,0]
-        self.success[1] = self.success[1] + len(self.sells)
-        for i in range(len(self.sells)):
-            if self.sells[i] > 0:
-                self.success[0] = self.success[0] + 1
+            self.rating += roi
+            print(self.data.head())
+            if self.graph:
+                self.graph()
+
+        success = [(self.success[0] / self.success[1]) * 100, self.success[1]]
+        print(f'trade success: %{success[0]} out of {success[1]} trades')
+        print(f'rating: %{self.rating}')
+                
+
+
+
+    elif self.bot_type == 'stock':
+        for symbol in self.symbols:
+            self.CurrentSymbol = symbol
+            self.index=0
+            self.data = pdr.get_data_yahoo(symbols=symbol, interval=self.interval, start='JAN-01-2020', end='DEC-28-2020') # iterates over symbols by symbol to backtest algorithm on symbol data
+            self.close = self.data['Close']
+            for index, rows in self.data.iterrows():
+                if self.shares != 0:
+                    self.investment_gain = ((self.data['Close'][self.index] - self.trades[-1][1]) / self.trades[-1][1]) * 100
+                    if self.investment_gain < self.stop_loss:
+                        self.sell()
+                self.algo(self)
+
+
+                self.index+=1
+
+            if self.shares != 0:
+                profit = ( self.data['Close'][-1]*self.shares ) - ( self.trades[-1][1] * self.shares )
+                self.sells.append(profit) 
+                self.balance = profit + ( self.trades[-1][1] * self.shares )
+                self.shares = 0
+
+                
+            roi = ((self.balance - self.startBalance) / self.startBalance) * 100
+            self.success = [0,0]
+            self.success[1] = self.success[1] + len(self.sells)
+            for i in range(len(self.sells)):
+                if self.sells[i] > 0:
+                    self.success[0] = self.success[0] + 1
 
 
 
 
-        self.balance = 10000
-        self.shares = 0
+            self.balance = 10000
+            self.shares = 0
 
-        self.rating += roi
-        if self.graph:
-            self.graph()
+            self.rating += roi
+            print(self.data.head())
+            if self.graph:
+                self.graph()
 
-    success = [(self.success[0] / self.success[1]) * 100, self.success[1]]
-    print(f'trade success: %{success[0]} out of {success[1]} trades')
-    print(f'rating: %{self.rating}')
+        success = [(self.success[0] / self.success[1]) * 100, self.success[1]]
+        print(f'trade success: %{success[0]} out of {success[1]} trades')
+        print(f'rating: %{self.rating}')
