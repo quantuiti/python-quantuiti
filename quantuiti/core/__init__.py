@@ -5,3 +5,5 @@ from ._backtest import backtest_algorithm
 from ._livetest import livetest_algorithm
 
 from ._build_indicator import build_indicator
+
+from ._WindowsInhibitor import WindowsInhibitor

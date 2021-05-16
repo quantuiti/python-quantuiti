@@ -11,10 +11,12 @@ def ema(self, N):
     dependent = 'sma_' + str(N)
 
     if not self.backtest:
-        if N < len(self.data):
+        if len(self.data) <= N:
             self.sma(N)
+
             temp=[]
             for index, row in self.data.iterrows():
+                self.sma(N)
                 if np.isnan(row[dependent]):
                     temp.append(row[dependent])
                 else:
@@ -26,12 +28,17 @@ def ema(self, N):
                     temp.append(ema)
             
             self.data[name] = temp
+            print(temp)
             return temp[self.index]
-        elif len(self.data) > N:
+
+        elif len(self.data) > N: # uses less compute power as dataset gets bigger
+            self.sma(N)
+            print(len(self.data), ':', N)
+            print(self.data[name])
             ema = (self.data['Close'][self.index-1] - self.data[name][self.index-1]) * (2 / (N + 1)) + self.data[name][self.index-1]
 
-            temp = self.data[name].append(ema)
-            self.data[name] = temp
+            self.data[name][self.index] = ema
+            print(self.data[name])
             return ema
 
     elif self.backtest:

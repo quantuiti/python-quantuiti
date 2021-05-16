@@ -18,9 +18,10 @@ def cci(self, N=20):
     """
     name = 'cci_' + str(N)
 
-    try:
+    if self.data.get(name).get(self.index):
+
         return self.data[name][self.index]
-    except:
+    else:
         TP = (self.data['High'] + self.data['Low'] + self.data['Close']) / 3 
         CCI = pd.Series((TP - TP.rolling(N).mean()) / (0.015 * TP.rolling(N).std()), name=name) 
         self.data[name] = CCI 

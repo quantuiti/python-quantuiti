@@ -7,4 +7,5 @@ socket.on('connect', function() {
 
 socket.on('message', function(data){
     document.getElementById('BTC-USDT').innerHTML = data['Close'];
+    document.title = data['Close']
 });

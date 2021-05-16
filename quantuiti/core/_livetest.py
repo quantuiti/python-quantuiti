@@ -1,3 +1,4 @@
+import socketio
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import ProcessPoolExecutor
@@ -6,16 +7,14 @@ from kucoin.ws_client import KucoinWsClient
 import kucoin.client as kucoin
 
 from datetime import datetime
-
 import pandas as pd
 
-import sys
 
-import socketio
+from time import sleep
+import os
+from traceback import print_exc
 
-async def commands():
-    keep_alive = True
-     
+from ._WindowsInhibitor import WindowsInhibitor
 
 def livetest_algorithm(self):
     """
@@ -25,6 +24,10 @@ def livetest_algorithm(self):
     api_secret = self.client['api_secret']
     api_passphrase = self.client['api_passphrase']
     api_url = self.client['api_url']
+
+    if os.name == 'nt':
+        osSleep = WindowsInhibitor()
+        osSleep.inhibit()
 
     if 'sandbox' in api_url:
         api_sandbox = True
@@ -73,6 +76,13 @@ def livetest_algorithm(self):
                     except Exception as error:
                         print(error)
                         print(type(error))
+                        if type(error) == TypeError:
+                            # print_exc()
+                            exit()
+
+
+
+                        sleep(5)
                        
                         temp = {
                             'Date':   [datetime.fromtimestamp(time).strftime('%Y-%M-%d %H-%M-%S')],
