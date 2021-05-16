@@ -54,54 +54,50 @@ def livetest_algorithm(self):
         async def main():
             async def deal_msg(msg):
                 if msg['topic'] == '/market/candles:BTC-USDT_1min':
-                    candles = msg['data']['candles']
-                    time = int(candles[0])
                     try:
-                        self.prevtime
-                        if time >= self.prevtime:
-                            temp = {
-                                'Date':   datetime.fromtimestamp(time).strftime('%Y-%M-%d %H-%M-%S'),
-                                'High':   float(candles[3]),
-                                'Low':    float(candles[4]),
-                                'Open':   float(candles[1]),
-                                'Close':  float(candles[2]),
-                                'Volume': float(candles[6])
-                            }
-                            self.close = temp['Close']
-                            self.data = self.data.append(temp, ignore_index=True)
-                            self.index += 1
-                            self.algo(self)
-                            await self.sio.emit('message', temp)
+                        candles = msg['data']['candles']
+                        time = int(candles[0])
+                        if hasattr(self, 'prevtime'):
+
                             
+                            if time >= self.prevtime:
+                                temp = {
+                                    'Date':   datetime.fromtimestamp(time).strftime('%Y-%M-%d %H-%M-%S'),
+                                    'High':   float(candles[3]),
+                                    'Low':    float(candles[4]),
+                                    'Open':   float(candles[1]),
+                                    'Close':  float(candles[2]),
+                                    'Volume': float(candles[6])
+                                }
+                                self.close = temp['Close']
+                                self.data = self.data.append(temp, ignore_index=True)
+                                self.index += 1
+                                self.algo(self)
+                                await self.sio.emit('message', temp)
+                                
+                        elif not hasattr(self, 'prevtime'):
+                            temp = {
+                                'Date':   [datetime.fromtimestamp(time).strftime('%Y-%M-%d %H-%M-%S')],
+                                'High':   [float(candles[3])],
+                                'Low':    [float(candles[4])],
+                                'Open':   [float(candles[1])],
+                                'Close':  [float(candles[2])],
+                                'Volume': [float(candles[6])]
+                            }
+                        
+                            self.index = 0
+                            self.data = pd.DataFrame(temp)
+
+                        self.prevtime = time
                     except Exception as error:
                         print(error)
-                        print(type(error))
-                        if type(error) == TypeError:
-                            # print_exc()
-                            exit()
-
-
-
-                        sleep(5)
-                       
-                        temp = {
-                            'Date':   [datetime.fromtimestamp(time).strftime('%Y-%M-%d %H-%M-%S')],
-                            'High':   [float(candles[3])],
-                            'Low':    [float(candles[4])],
-                            'Open':   [float(candles[1])],
-                            'Close':  [float(candles[2])],
-                            'Volume': [float(candles[6])]
-                        }
-                    
-                        self.index = 0
-                        self.data = pd.DataFrame(temp)
-
-                    self.prevtime = time
+                        print_exc()
 
             client = WsToken(key=api_key, secret=api_secret, passphrase=api_passphrase, is_sandbox=api_sandbox, url=api_url) # websockets stuff 
             self.ws_client = await KucoinWsClient.create(None, client, deal_msg, private=False)                              #
             await self.ws_client.subscribe('/market/candles:BTC-USDT_1min')                                                  #
             await self.sio.connect('http://127.0.0.1:5000')   
+            print('connected to kucoin socket')
             await self.sio.sleep(1.0)                                                               #
             
             while True:
@@ -127,15 +123,6 @@ def livetest_algorithm(self):
             except RuntimeError as error:
                 print(error)
                 
-                
-
-        for symbol in self.symbols:
-            try:
-                while True:
-                    pass
-            except KeyboardInterrupt:
-                print('KeyboardInterrupt')
-                print('cleaning up...')
 
     if self.bot_type == 'stock':
         pass

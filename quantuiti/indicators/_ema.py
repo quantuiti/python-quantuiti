@@ -28,13 +28,10 @@ def ema(self, N):
                     temp.append(ema)
             
             self.data[name] = temp
-            print(temp)
             return temp[self.index]
 
         elif len(self.data) > N: # uses less compute power as dataset gets bigger
             self.sma(N)
-            print(len(self.data), ':', N)
-            print(self.data[name])
             ema = (self.data['Close'][self.index-1] - self.data[name][self.index-1]) * (2 / (N + 1)) + self.data[name][self.index-1]
 
             self.data[name][self.index] = ema
