@@ -7,12 +7,24 @@
     <title>Document</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
     <script src="/static/index.js"></script>
+    <link rel="stylesheet" href='/static/index.css'>
 </head>
 <body>
     <h1>hello world</h1>
-    <div>
-        <h1>current BTC-USDT price</h1>
-        <h2 id="BTC-USDT"></h2>
+    <div class="container">
+        <div class="left-div">
+            <h1>current BTC-USDT price</h1>
+            <h2 id="BTC-USDT"></h2>
+    
+        </div>
+        <div class="right-div">
+            <div class="console"></div>
+            <form onsubmit="command();" action="javascript: void(0)">
+                <input type="text" id="console-input" >
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
     </div>
 </body>
 </html>

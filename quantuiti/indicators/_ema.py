@@ -34,8 +34,9 @@ def ema(self, N):
             self.sma(N)
             ema = (self.data['Close'][self.index-1] - self.data[name][self.index-1]) * (2 / (N + 1)) + self.data[name][self.index-1]
 
-            self.data[name][self.index] = ema
-            print(self.data[name])
+            self.data.loc[self.index, name] = ema
+
+            # self.data[name][self.index] = ema
             return ema
 
     elif self.backtest:

