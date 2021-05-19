@@ -11,7 +11,8 @@ import pandas as pd
 
 
 from time import sleep
-import os
+from os import name as osName
+from sys import getsizeof as memSize
 from traceback import print_exc
 
 from ._WindowsInhibitor import WindowsInhibitor
@@ -28,7 +29,7 @@ def livetest_algorithm(self):
     api_passphrase = self.client['api_passphrase']
     api_url = self.client['api_url']
 
-    if os.name == 'nt':
+    if osName == 'nt':
         osSleep = WindowsInhibitor()
         osSleep.inhibit()
 
@@ -115,7 +116,8 @@ def livetest_algorithm(self):
             await self.ws_client.subscribe('/market/candles:BTC-USDT_1min')                                                  #
             await self.sio.connect('http://127.0.0.1:5000')   
             print('connected to kucoin socket')
-            await self.sio.sleep(1.0)                                                               #
+            await self.sio.sleep(1.0)    
+            
             
             while True:
                 await asyncio.sleep(5, loop=loop)

@@ -12,6 +12,7 @@ socket.on('message', function(data){
 
 socket.on('return_command', function(data){
     alert(data['response'])
+    document.getElementById('console').innerHTML += ` ${data['response']} </br>`;
 })
 
 function command() {
