@@ -48,10 +48,19 @@ def livetest_algorithm(self):
             if data.get('command'):
                 command = data.get('command')
                 f = StringIO()
+                
+                
                 with redirect_stdout(f):
-                    exec(command)
+                    try:
+                        exec(
+                            f'async def __ex(self=self): ' +
+                            ''.join(f'\n {l}' for l in command.split('\n'))
+                        )
+                        await locals()['__ex']()
+                    except Exception as error:
+                        print("[*] error", error)
+                
                 to_return = f.getvalue()
-
                 await self.sio.emit('command', {'response': to_return, 'client': data.get('client')})
         
         @self.sio.event
