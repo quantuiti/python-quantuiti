@@ -51,18 +51,36 @@ class Engine():
         self.trades = []
         self.sells = []
         self.client = {}
-
-    def buy(self):
+        self._algorithm = None
+    async def buy(self):
         if self.shares == 0 and self.balance > 0 :
             self.shares = self.balance / self.data['Close'][self.index]
             self.balance = 0
-            self.trades.append(tuple([self.shares, self.data['Close'][self.index]])) 
+            self.trades.append(tuple([self.shares, self.data['Close'][self.index]]))
+            if getattr(self, 'sio') is not None:
+                await self.sio.emit('buy', {
+                    'buy': {
+                        'shares': self.shares,
+                        'balance': self.balance,
+                        'price': self.close 
+
+                    }
+                })
+         
     
-    def sell(self):
+    async def sell(self):
         if self.shares != 0:
             profit = ( self.data['Close'][self.index]*self.shares ) - ( self.trades[-1][1] * self.shares )
             self.sells.append(profit) 
             self.balance = profit + ( self.trades[-1][1] * self.shares )
+            if getattr(self, 'sio') is not None:
+                await self.sio.emit('sell', {
+                    'sell': {
+                        'shares': self.shares,
+                        'balance': self.balance,
+                        'price': self.close 
+                    }
+                })
             self.shares = 0
     
     def config(self, config: dict):

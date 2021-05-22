@@ -35,6 +35,8 @@ def livetest_algorithm(self):
 
     if 'sandbox' in api_url:
         api_sandbox = True
+    else:
+        api_sandbox = False
 
     if self.client['type'] == 'crypto':
         self.sio = socketio.AsyncClient()
@@ -48,19 +50,10 @@ def livetest_algorithm(self):
             if data.get('command'):
                 command = data.get('command')
                 f = StringIO()
-                
-                
                 with redirect_stdout(f):
-                    try:
-                        exec(
-                            f'async def __ex(self=self): ' +
-                            ''.join(f'\n {l}' for l in command.split('\n'))
-                        )
-                        await locals()['__ex']()
-                    except Exception as error:
-                        print("[*] error", error)
-                
+                    exec(command)
                 to_return = f.getvalue()
+
                 await self.sio.emit('command', {'response': to_return, 'client': data.get('client')})
         
         @self.sio.event
@@ -99,7 +92,7 @@ def livetest_algorithm(self):
                                 self.close = temp['Close']
                                 self.data = self.data.append(temp, ignore_index=True)
                                 self.index += 1
-                                self.algo(self)
+                                await self._algorithm(self)
                                 await self.sio.emit('message', temp)
                                 
                         elif not hasattr(self, 'prevtime'):
@@ -120,12 +113,18 @@ def livetest_algorithm(self):
                         print(error)
                         print_exc()
 
-            client = WsToken(key=api_key, secret=api_secret, passphrase=api_passphrase, is_sandbox=api_sandbox, url=api_url) # websockets stuff 
+            if api_sandbox:
+                client = WsToken(key=api_key, secret=api_secret, passphrase=api_passphrase, is_sandbox=api_sandbox, url=api_url) # websockets stuff 
+            else:
+                client = WsToken(key=api_key, secret=api_secret, passphrase=api_passphrase) # websockets stuff 
+
             self.ws_client = await KucoinWsClient.create(None, client, deal_msg, private=False)                              #
-            await self.ws_client.subscribe('/market/candles:BTC-USDT_1min')                                                  #
-            await self.sio.connect('http://127.0.0.1:5000')   
+            await self.ws_client.subscribe('/market/candles:BTC-USDT_1min')  
+            try:
+                await self.sio.connect('http://127.0.0.1:5000')   
+            except socketio.exceptions.ConnectionError as error:
+                print('flask not connected')
             print('connected to kucoin socket')
-            await self.sio.sleep(1.0)    
             
             
             while True:

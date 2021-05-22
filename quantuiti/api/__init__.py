@@ -3,6 +3,10 @@ import webbrowser
 from flask_socketio import SocketIO, join_room, leave_room, send
 import logging
 
+from termcolor import colored
+
+from datetime import datetime
+
 def run_api():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret!'
@@ -26,6 +30,51 @@ def run_api():
             servers.append(data.get('room'))
             join_room(data.get('room'))
             return 'ack', 200
+
+    @socketio.on('buy')
+    def buy(data):
+        """
+            recieves data when algorithm sends a buy signal.
+        """
+        if not data.get('buy'):
+            
+            print(
+                colored((f'[*] { datetime.now().strftime("%H:%M:%S")} -- malformed data sent to ', buy), 'red')
+            )
+
+        elif data['buy'].get('shares') is None or data['buy'].get('balance') is None or data['buy'].get('price') is None:
+            print(
+                colored((f'[*] { datetime.now().strftime("%H:%M:%S")} -- malformed data sent to ', buy), 'red')
+            )
+        else:
+            socketio.emit('client_data', 
+            {'buy': {
+                'shares': data['buy'].get('shares'),
+                'balance':data['buy'].get('balance'),
+                'price':  data['buy'].get('price')
+            }}, 
+            room=data.get('client'))
+    @socketio.on('sell')
+    def sell(data):
+        """
+            recieves data when algorithm sends a sell signal.
+        """
+        if not data.get('sell'):
+            print(
+                colored((f'[*] { datetime.now().strftime("%H:%M:%S")} -- malformed data sent to ', sell), 'red')
+            )
+        elif data['sell'].get('shares') is None or data['sell'].get('balance') is None or data['sell'].get('price') is None:
+            print(
+                colored((f'[*] { datetime.now().strftime("%H:%M:%S")} -- malformed data sent to ', sell), 'red')
+            )
+        else:
+            socketio.emit('client_data', 
+            {'sell': {
+                'shares': data['sell'].get('shares'),
+                'balance':data['sell'].get('balance'),
+                'price':  data['sell'].get('price')
+            }}, 
+            room=data.get('client'))                
 
 
             

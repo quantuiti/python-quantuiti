@@ -15,6 +15,17 @@ socket.on('return_command', function(data){
     document.getElementById('console').innerHTML += ` ${data['response']} </br>`;
 })
 
+socket.on('client_data', function(data){
+    if( data['buy']){
+        document.getElementById('console').innerHTML += `bought ${data['buy']['shares']} at $${data['buy']['price']} </br>`;
+    }else if (data['sell']){
+        document.getElementById('console').innerHTML += `sold ${data['sell']['shares']} at $${data['sell']['price']}, balance:${data['sell']['balance']} </br>`;
+    }else {
+        console.error('[*] Check server, client_data is not correct')
+    };
+    
+})
+
 function command() {
     com_send = document.getElementById('console-input').value;
     socket.emit('command', {command: com_send})
