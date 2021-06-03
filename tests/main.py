@@ -24,7 +24,7 @@ Engine.config({
 @Engine.algorithm
 async def algo(weiners):
     # print('BTC-USDT price average', self.ema(5))
-    if self.ema(5) > self.ema(10):
+    if self.macd() > 0:
         await self.buy()
-    else:
-        await self.sell()
+    elif self.macd() <= 0:
+        await self.sell()  

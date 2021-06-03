@@ -20,7 +20,7 @@ class Engine():
 
     from .core import algorithm, BuildPythonFile, graph, backtest_algorithm, build_indicator, livetest_algorithm
 
-    from .indicators import cci, ema, emv, roc, sma
+    from .indicators import cci, ema, emv, roc, sma, macd
 
     def __init__(self, config=False, backtest=True ):
         self.constuctors()

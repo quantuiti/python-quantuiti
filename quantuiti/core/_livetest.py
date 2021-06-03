@@ -128,7 +128,7 @@ def livetest_algorithm(self):
             
             
             while True:
-                await asyncio.sleep(5, loop=loop)
+                await asyncio.sleep(60, loop=loop)
 
                     
         loop = asyncio.get_event_loop()
