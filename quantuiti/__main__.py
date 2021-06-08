@@ -1,13 +1,15 @@
 import argparse
-from os import system
-from subprocess import Popen, DEVNULL
 from multiprocessing import Process
-from time import sleep
-
 import sys
 import os
+from os import system
+
+import webbrowser
+
 dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(1, dir_path)
+
+
 
 from quantuiti import run_api
 
@@ -36,6 +38,7 @@ def main():
         api.start()
         main.start()
 
+        webbrowser.open('127.0.0.1:5000')
 
         api.join()
         main.join()

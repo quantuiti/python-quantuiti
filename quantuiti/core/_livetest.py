@@ -8,10 +8,11 @@ import kucoin.client as kucoin
 
 from datetime import datetime
 import pandas as pd
+import csv
 
 
 from time import sleep
-from os import name as osName
+from os import name as osName, path
 from sys import getsizeof as memSize
 from traceback import print_exc
 
@@ -41,6 +42,19 @@ def livetest_algorithm(self):
     if self.client['type'] == 'crypto':
         self.sio = socketio.AsyncClient()
 
+        async def append_to_csv(df, file):
+            if path.exists(file):
+                with open(file, 'r') as f:
+                    header = next(csv.reader(f))
+                columns = df.columns
+                for column in set(header) - set(columns):
+                    df[column] = ''
+                df = df[header]
+                df.to_csv(file, index = False, header = False, mode = 'a')
+            else:
+                df.to_csv(file, index=False, header=True)
+                
+
         @self.sio.event
         async def message(data):
             print(data)
@@ -49,9 +63,12 @@ def livetest_algorithm(self):
         async def command(data,self=self):
             if data.get('command'):
                 command = data.get('command')
+            
+                _func_template = 'async def __ex(self): \n' + '\t ' + command
+                exec(_func_template)
                 f = StringIO()
                 with redirect_stdout(f):
-                    exec(command)
+                    await locals()['__ex'](self=self)
                 to_return = f.getvalue()
 
                 await self.sio.emit('command', {'response': to_return, 'client': data.get('client')})
@@ -79,21 +96,43 @@ def livetest_algorithm(self):
                         time = int(candles[0])
                         if hasattr(self, 'prevtime'):
 
-                            
-                            if time >= self.prevtime:
-                                temp = {
-                                    'Date':   datetime.fromtimestamp(time).strftime('%Y-%M-%d %H-%M-%S'),
-                                    'High':   float(candles[3]),
-                                    'Low':    float(candles[4]),
-                                    'Open':   float(candles[1]),
-                                    'Close':  float(candles[2]),
-                                    'Volume': float(candles[6])
-                                }
+                            temp = {
+                                'Date':   datetime.fromtimestamp(time).strftime('%Y-%M-%d %H-%M-%S'),
+                                'High':   float(candles[3]),
+                                'Low':    float(candles[4]),
+                                'Open':   float(candles[1]),
+                                'Close':  float(candles[2]),
+                                'Volume': float(candles[6])
+                            }
+
+                            if time > self.prevtime:
+                                
                                 self.close = temp['Close']
                                 self.data = self.data.append(temp, ignore_index=True)
-                                self.index += 1
+                                self.index += 1 
+                                
+
                                 await self._algorithm(self)
-                                await self.sio.emit('message', temp)
+
+
+                                # caches dataframe to preserve memory
+                                
+                                if len(self.data) % self.mem_cache_size == 0:
+                                    frame_cache_size = int(self.mem_cache_size / 2)
+                                    dump_frame = self.data[0:frame_cache_size]
+                                    _datetime = datetime.now().strftime('%d_%m_%Y_%H_%M_%S')
+                                    _filename = f'{_datetime}.csv'
+                                    _temp_filename = 'data.csv'
+                                    _full_path = f'{self.data_path}{_temp_filename}'
+
+                                    await append_to_csv(dump_frame, _full_path)
+                                    print('cached dataframe')
+
+                                    self.data = self.data.drop(range(0,frame_cache_size))
+                                    self.data = self.data.reset_index(drop=True)
+                                    self.index=len(self.data)-1
+
+                            await self.sio.emit('message', temp)
                                 
                         elif not hasattr(self, 'prevtime'):
                             temp = {

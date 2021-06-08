@@ -31,6 +31,14 @@ class Engine():
         del frame_info
         filepath = os.path.abspath(filepath)
         filepath = filepath.replace(f'/{filename}', '')
+
+
+        # sets the path for data to be stored
+        self.data_path = filepath.replace('\\', '/')
+        self.data_path = self.data_path.split('/')[-1]
+        self.data_path = filepath.replace(self.data_path, 'data/')
+        self.data_path = self.data_path.replace('\\', '/')
+
         self.path = filepath
         if config:
             self.config(config=config)
@@ -52,6 +60,9 @@ class Engine():
         self.sells = []
         self.client = {}
         self._algorithm = None
+        self.mem_cache_size = 200
+
+
     async def buy(self):
         if self.shares == 0 and self.balance > 0 :
             self.shares = self.balance / self.data['Close'][self.index]

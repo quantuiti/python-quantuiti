@@ -10,8 +10,15 @@ def sma(self, N):
     name = 'sma_' + str(N)
     
     if not self.backtest:
-        self.data[name] = self.data.loc[:, 'Close'].rolling(window=N).mean() 
-        return self.data[name][self.index]
+        self.data[name] = self.data.loc[:, 'Close'].rolling(window=N).mean()
+        last_valid_index = self.data[name].last_valid_index()
+        try:
+            return self.data[name][self.index]
+        except Exception:
+            return self.data[name][last_valid_index]
+
+            
+            
         
     else:
         try:
